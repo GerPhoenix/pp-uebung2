@@ -1,11 +1,10 @@
 package io.dama.par.hoh;
 
 public class NewListImpl<T> implements NewList<T> {
-	/*
-	 * Statt *synchronized* als Schlüsselwort an den Methoden wird hier eine private
-	 * Instanzvariable zum Synchronisieren verwendet, damit niemand von außen an
-	 * derselben Variable einen Lock setzen kann, um Verklemmungen zu vermeiden.
-	 * 
+	/* Leu'
+		Statt *synchronized* als Schlüsselwort an den Methoden wird hier eine private
+	 	Instanzvariable zum Synchronisieren verwendet, damit niemand von außen an
+	  	derselben Variable einen Lock setzen kann, um Verklemmungen zu vermeiden.
 	 */
 	private final Object intrinsicLock = new Object();
 
@@ -39,6 +38,9 @@ public class NewListImpl<T> implements NewList<T> {
 		.unlock() des Elements davor.
 		
 		s.a.: https://stackoverflow.com/questions/43762688/java-locks-hand-over-hand-locking-through-list
+	*/
+	/* Sko'
+	-->	Kann man das Listenobjekt als zu-veränderndes Element *als auch gleichzeitig* als Lock nutzen? <--
 	*/
 	@Override
 	public T get(final int i) {
