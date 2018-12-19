@@ -27,6 +27,19 @@ public class NewListImpl<T> implements NewList<T> {
 		this.first = null;
 	}
 
+	/* Sko'
+		Wichtig für das HOH-Lock ist, 
+		dass nicht die gesamte Methode gesperrt wird 
+		sondern bestenfalls nur zwei/drei Elemente der Liste durch den Lock betroffen sind.
+		
+		thisElement.intrinsiclock.lock() bzw thisElement.lock()
+		und / oder
+		ptr.next.intrinsiclock.lock() bzw ptr.next.lock()
+		mit
+		.unlock() des Elements davor.
+		
+		s.a.: https://stackoverflow.com/questions/43762688/java-locks-hand-over-hand-locking-through-list
+	*/
 	@Override
 	public T get(final int i) {
 		synchronized (this.intrinsicLock) {
