@@ -37,29 +37,12 @@ public class Main {
 			System.out.println(Thread.currentThread().getName() + ": " + sum);
 		});
 		
-		final Thread threadAdd1 = new Thread(() -> {
-			for (int i = 0; i < iterate; i++) {
-				list.add(-i);
-			}
-		});
-		
-		final Thread threadAdd2 = new Thread(() -> {
-			for (int i = 0; i < iterate; i++) {
-				list.add(i);
-			}
-		});
-		
-		final Thread threadPrint = new Thread(() -> {
-			for (int i = 0; i < iterate; i++) {
-				System.out.println(list.get(i));
-			}
-		});
+		for (int i = 0; i < iterate; i++) {
+			list.add(i);
+		}
 		
 		final long start = System.currentTimeMillis();
-		threadAdd1.start();
-		threadAdd2.start();
-		threadAdd1.join();
-		threadAdd2.join();
+		
 		thread0.start();
 		thread1.start();
 		thread2.start();
@@ -69,7 +52,6 @@ public class Main {
 		thread2.join();
 		thread3.join();
 		System.out.printf("%d ms", System.currentTimeMillis() - start);
-		threadPrint.start();
 	}
 	
 }
