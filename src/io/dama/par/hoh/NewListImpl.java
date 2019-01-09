@@ -54,8 +54,6 @@ public class NewListImpl<T> implements NewList<T> {
         //prev: used to ensure correct unlocking
         ListElement<T> prev;
         first.lock.lock();
-        if (i == 0)
-            return inspect(first.element);
         try {
             int j = 0;
             while (j++ < i) {
@@ -102,10 +100,7 @@ public class NewListImpl<T> implements NewList<T> {
     public void mod(final int i, final T e) {
         ListElement<T> ptr = first;
         ListElement<T> prev;
-        if (i == 0) {
-            first.element = e;
-            return;
-        }
+        first.lock.lock();
         try {
             int j = 0;
             while (j++ < i) {
