@@ -50,22 +50,15 @@ public class NewListImpl<T> implements NewList<T> {
 	*/
     @Override
     public T get(final int i) {
-        ListElement<T> ptr;
+        ListElement<T> ptr = first;
+        //prev: used to ensure correct unlocking
         ListElement<T> prev;
         first.lock.lock();
-        try {
-            if (i == 0) {
-                return inspect(first.element);
-            } else {
-                ptr = first.next;
-                ptr.lock.lock();
-            }
-        } finally {
-            first.lock.unlock();
-        }
+        if (i == 0)
+            return inspect(first.element);
         try {
             int j = 0;
-            while (j++ < i - 1) {
+            while (j++ < i) {
                 prev = ptr;
                 try {
                     ptr = ptr.next;
@@ -107,23 +100,15 @@ public class NewListImpl<T> implements NewList<T> {
 
     @Override
     public void mod(final int i, final T e) {
-        ListElement<T> ptr;
+        ListElement<T> ptr = first;
         ListElement<T> prev;
-        first.lock.lock();
-        try {
-            if (i == 0) {
-                first.element = e;
-                return;
-            } else {
-                ptr = first.next;
-                ptr.lock.lock();
-            }
-        } finally {
-            first.lock.unlock();
+        if (i == 0) {
+            first.element = e;
+            return;
         }
         try {
             int j = 0;
-            while (j++ < i - 1) {
+            while (j++ < i) {
                 prev = ptr;
                 try {
                     ptr = ptr.next;
