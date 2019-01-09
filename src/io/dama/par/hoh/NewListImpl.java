@@ -49,25 +49,24 @@ public class NewListImpl<T> implements NewList<T> {
 	@Override
 	public T get(final int i) {
 		ListElement<T> ptr = first;
-		//prev: used to ensure correct unlocking
-		ListElement<T> prev;
-		first.lock.lock();
+		if (ptr == null)
+			throw new IndexOutOfBoundsException(i);
+		
+		ptr.lock.lock();
 		try {
-			int j = 0;
-			while (j++ < i) {
-				prev = ptr;
-				try {
-					ptr = ptr.next;
-					ptr.lock.lock();
-				} finally {
-					prev.lock.unlock();
-				}
+			for (int j = 0; j < i; j++) {
+				if (ptr.next == null)
+					throw new IndexOutOfBoundsException(i);
+				
+				//critical block
+				ptr.next.lock.lock();
+				ptr.lock.unlock();
+				ptr = ptr.next;
 			}
 			return inspect(ptr.element);
 		} finally {
 			ptr.lock.unlock();
 		}
-		
 	}
 	
 	@Override
@@ -78,15 +77,15 @@ public class NewListImpl<T> implements NewList<T> {
 			if (first == null) {
 				first = element;
 			} else {
+				
 				first.lock.lock();
-				ListElement<T> oldFirst = first;
 				try {
 					element.next = first;
 					first.prev = element;
-					first = element;
 				} finally {
-					oldFirst.lock.unlock();
+					first.lock.unlock();
 				}
+				first = element;
 			}
 		} finally {
 			addLock.unlock();
@@ -97,18 +96,19 @@ public class NewListImpl<T> implements NewList<T> {
 	@Override
 	public void mod(final int i, final T e) {
 		ListElement<T> ptr = first;
-		ListElement<T> prev;
+		if (ptr == null)
+			throw new IndexOutOfBoundsException(i);
+		
 		first.lock.lock();
 		try {
-			int j = 0;
-			while (j++ < i) {
-				prev = ptr;
-				try {
-					ptr = ptr.next;
-					ptr.lock.lock();
-				} finally {
-					prev.lock.unlock();
-				}
+			for (int j = 0; j < i; j++) {
+				if (ptr.next == null)
+					throw new IndexOutOfBoundsException(i);
+				
+				//critical block
+				ptr.next.lock.lock();
+				ptr.lock.unlock();
+				ptr = ptr.next;
 			}
 			ptr.element = e;
 		} finally {
